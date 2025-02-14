@@ -134,7 +134,16 @@ class Bot(commands.Bot):
                 buttword = get_buttword_plural(
                     settings["word"], syllable_lists[random_word], random_syllable)
 
-                syllable_lists[random_word][random_syllable] = buttword
+                # Check the capitalisation
+                syll = syllable_lists[random_word][random_syllable]
+                if syll == syll.lower():
+                    syll = buttword
+                elif syll == syll[0].upper() + syll[1:].lower():
+                    syll = buttword[0].upper() + buttword[1:]
+                else:
+                    syll = buttword.upper()
+
+                syllable_lists[random_word][random_syllable] = syll
 
                 # Only log the word replacement once, not as word and syllable separately
                 logger.info(
@@ -222,7 +231,7 @@ class Bot(commands.Bot):
         channel_name = ctx.author.name if is_in_bot_channel else ctx.channel.name
 
         if not is_in_bot_channel and channel_name != ctx.author.name:
-            await ctx.send('Please use the !leave command in your own channel.')
+            await ctx.send('Please use the {bot_prefix}leave command in your own channel.')
             logger.warning(
                 f'Non-host trying to remove me from the channel {channel_name}.')
             return
@@ -252,7 +261,7 @@ class Bot(commands.Bot):
         # let the user know of that instead
         if is_in_bot_channel and channel_name not in self.channel_settings:
             await ctx.channel.send(
-                'The bot has not joined your channel, do !join to have it join.')
+                'The bot has not joined your channel, do {bot_prefix}join to have it join.')
         else:
             settings = self.channel_settings.setdefault(
                 channel_name, DEFAULT_BUTT_INFO)
@@ -292,7 +301,7 @@ class Bot(commands.Bot):
         # let the user know of that instead
         if is_in_bot_channel and channel_name not in self.channel_settings:
             await ctx.channel.send(
-                'The bot has not joined your channel, do !join to have it join.')
+                'The bot has not joined your channel, do {bot_prefix}join to have it join.')
         else:
             settings = self.channel_settings.setdefault(
                 channel_name, DEFAULT_BUTT_INFO)
