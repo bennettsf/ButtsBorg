@@ -119,6 +119,12 @@ class Bot(commands.Bot):
 
         syllable_lists = syllables_split(message.content)
 
+        # Ignore messages with single words that have less than 3 syllables (not including punctuation)
+        filtered_syllables = len([x for x in get_syllables_no_punctuation(syllable_lists[0]) if x != ''])
+        if len(syllable_lists) <= 1 and filtered_syllables < 3:
+            logger.info(f"Message of {message.content} too short")
+            return False
+
         butt_num = math.ceil(
             len(syllable_lists) / BUTT_RATE_PER_SENTENCE)
 

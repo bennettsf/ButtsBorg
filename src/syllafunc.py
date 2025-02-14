@@ -12,7 +12,10 @@ def syllables_split(sentence: str):
     words = sentence.split()
     syllable_list = []
     for word in words:
+        # Make sure dashes in words don't just disappear
+        word.replace("-"," ")
         syllables = s.inserted(word).split('-')
+        word.replace(" ", "-")
         if word == '\U000e0000' or all(len(ele) == 0 for ele in syllables):
             continue
 
